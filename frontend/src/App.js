@@ -1,14 +1,30 @@
 import './App.css';
+import {LanguagesTable, MessagesTable, TagsTable} from "./components";
+import {Grid} from "@mui/material";
+
 
 function App() {
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-      </header>
-    </div>
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-evenly"
+      alignItems="center"
+      spacing={4}
+      paddingTop={5}
+    >
+      <Grid item>
+        <TagsTable/>
+      </Grid>
+      <Grid item>
+        <LanguagesTable/>
+      </Grid>
+      <Grid item>
+        <MessagesTable/>
+      </Grid>
+    </Grid>
   );
 }
 

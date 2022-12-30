@@ -1,0 +1,51 @@
+import React, {useEffect, useMemo, useState} from "react";
+import axios from "../../lib/axios";
+import BaseTable from "../BaseTable";
+
+
+const TagsTable = () => {
+  const [tags, setTags] = useState([])
+  const fetchTags = () => {
+    axios.get(`/api/tags/`)
+      .then(res => {
+        if (res.status === 200) {
+          setTags(res.data)
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error(error.response.data); // => the response payload
+        }
+      });
+  }
+
+    const columns = useMemo(
+    () => [
+      {
+        Header: 'Tags',
+        columns: [
+          {
+            Header: 'Id',
+            accessor: 'id',
+          },
+          {
+            Header: 'Tag',
+            accessor: 'tag',
+          },
+        ],
+      },
+    ],
+    []
+  )
+
+  useEffect(() => {
+    fetchTags();
+  }, []);
+
+  return (
+    <BaseTable columns={columns} data={tags}></BaseTable>
+
+  );
+};
+
+export default TagsTable;

@@ -29,7 +29,7 @@ const TagsTable = () => {
             accessor: 'id',
           },
           {
-            Header: 'Tag',
+            Header: 'Name',
             accessor: 'tag',
           },
         ],

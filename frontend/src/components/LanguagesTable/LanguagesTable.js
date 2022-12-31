@@ -30,7 +30,7 @@ const LanguagesTable = () => {
             accessor: 'id',
           },
           {
-            Header: 'Language',
+            Header: 'Name',
             accessor: 'language',
           },
         ],

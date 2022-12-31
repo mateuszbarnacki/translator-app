@@ -1,6 +1,6 @@
 import './App.css';
 import {LanguagesTable, MessagesTable, TagsTable} from "./components";
-import {Grid} from "@mui/material";
+import {Grid, Typography} from "@mui/material";
 
 
 function App() {
@@ -10,19 +10,23 @@ function App() {
     <Grid
       container
       direction="column"
-      justifyContent="space-evenly"
+      justifyContent="center"
+      rowSpacing={4}
       alignItems="center"
-      spacing={4}
-      paddingTop={5}
     >
+      <Grid item>
+          <Typography variant="h2">
+            Cisco Translator App
+          </Typography>
+      </Grid>
+      <Grid item>
+        <MessagesTable/>
+      </Grid>
       <Grid item>
         <TagsTable/>
       </Grid>
       <Grid item>
         <LanguagesTable/>
-      </Grid>
-      <Grid item>
-        <MessagesTable/>
       </Grid>
     </Grid>
   );

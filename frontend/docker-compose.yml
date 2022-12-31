@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
 
-  sample-prod:
-    container_name: cisco-prod
+  cisco:
+    container_name: cisco
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     ports:
       - '1337:80'

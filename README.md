@@ -69,8 +69,7 @@ It is possible to use backend and frontend separately. To run the frontend witho
 ### Backend <a name="instruction-backend"></a>
 
 * Go to backend folder - `cd api/translator`
-* Build docker image: `docker build -t cisco-backend .`
-* Run docker container: `docker run -p 8080:8080 cisco-backend`
+* Using Docker Compose build Docker image and fire up container - `docker-compose -f docker-compose.yml up -d --build`
 * Navigate to http://localhost:8080/ in your browser to view the app
 
 ### Frontend <a name="instruction-frontend"></a>

@@ -4,7 +4,6 @@ import {TableBody, TableCell, TableHead, TableRow, Table, Typography} from "@mui
 
 
 const BaseTable = ({columns, data}) => {
-  // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
     headerGroups,
@@ -14,10 +13,9 @@ const BaseTable = ({columns, data}) => {
     columns,
     data,
   })
-  // Render the UI for your table
   return (
     <Table {...getTableProps()}>
-      <TableHead>
+      <TableHead role={"thead"}>
         {headerGroups.map(headerGroup => (
           <TableRow {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
@@ -29,14 +27,14 @@ const BaseTable = ({columns, data}) => {
           </TableRow>
         ))}
       </TableHead>
-      <TableBody>
+      <TableBody role={"tbody"}>
         {rows.map((row, i) => {
           prepareRow(row)
           return (
             <TableRow {...row.getRowProps()}>
               {row.cells.map(cell => {
                 return (
-                  <TableCell  align={"center"}{...cell.getCellProps()}>
+                  <TableCell  align={"center"} {...cell.getCellProps()}>
                     {cell.render('Cell')}
                   </TableCell>
                 )

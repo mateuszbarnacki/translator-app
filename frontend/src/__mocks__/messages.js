@@ -1,6 +1,6 @@
 const initMessagesMock = (mock) => {
   mock
-    .onGet('/api/messages/')
+    .onGet('/messages/')
     .reply(() => {
       const messages = [
         {

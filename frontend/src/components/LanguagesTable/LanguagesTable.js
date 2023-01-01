@@ -4,10 +4,9 @@ import BaseTable from "../BaseTable";
 
 
 const LanguagesTable = () => {
-
   const [languages, setLanguages] = useState([])
   const fetchLanguages = () => {
-    axios.get(`/api/languages/`)
+    axios.get(`/languages/`)
       .then(res => {
         if (res.status === 200) {
           setLanguages(res.data)
@@ -15,7 +14,7 @@ const LanguagesTable = () => {
       })
       .catch((error) => {
         if (error.response) {
-          console.error(error.response.data); // => the response payload
+          console.error(error.response.data);
         }
       });
   }
@@ -45,7 +44,6 @@ const LanguagesTable = () => {
 
   return (
     <BaseTable columns={columns} data={languages}></BaseTable>
-
   );
 };
 

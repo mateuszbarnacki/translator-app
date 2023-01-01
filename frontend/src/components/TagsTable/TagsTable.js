@@ -6,7 +6,8 @@ import BaseTable from "../BaseTable";
 const TagsTable = () => {
   const [tags, setTags] = useState([])
   const fetchTags = () => {
-    axios.get(`/api/tags/`)
+
+    axios.get(`/tags/`)
       .then(res => {
         if (res.status === 200) {
           setTags(res.data)
@@ -14,7 +15,7 @@ const TagsTable = () => {
       })
       .catch((error) => {
         if (error.response) {
-          console.error(error.response.data); // => the response payload
+          console.error(error.response.data);
         }
       });
   }
@@ -44,7 +45,6 @@ const TagsTable = () => {
 
   return (
     <BaseTable columns={columns} data={tags}></BaseTable>
-
   );
 };
 

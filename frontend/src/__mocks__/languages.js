@@ -1,6 +1,6 @@
 const initLanguagesMock = (mock) => {
   mock
-    .onGet('/api/languages/')
+    .onGet('/languages/')
     .reply(() => {
       const languages = [
         {

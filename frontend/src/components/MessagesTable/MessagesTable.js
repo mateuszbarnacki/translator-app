@@ -5,7 +5,7 @@ import BaseTable from "../BaseTable";
 const MessagesTable = () => {
   const [messages, setMessages] = useState([])
   const fetchMessages = () => {
-    axios.get(`/api/messages/`)
+    axios.get(`/messages/`)
       .then(res => {
         if (res.status === 200) {
           setMessages(res.data)
@@ -13,7 +13,7 @@ const MessagesTable = () => {
       })
       .catch((error) => {
         if (error.response) {
-          console.error(error.response.data); // => the response payload
+          console.error(error.response.data);
         }
       });
   }

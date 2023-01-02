@@ -34,19 +34,19 @@ class MessageEntity {
 
     private String content;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "language_id")
-        private LanguageEntity language;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id")
+    private LanguageEntity language;
 
-        @ManyToMany(cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
-        })
-        @JoinTable(name = "message_tag",
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "message_tag",
             joinColumns = @JoinColumn(name = "message_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
-        )
-        private Set<TagEntity> tags = new HashSet<>();
+    )
+    private Set<TagEntity> tags = new HashSet<>();
 
     @ManyToOne(
             cascade = CascadeType.REMOVE,
@@ -55,12 +55,12 @@ class MessageEntity {
     private MessageEntity originalMessage;
 
 
-    public void addTag(TagEntity tag){
+    public void addTag(TagEntity tag) {
         tags.add(tag);
         tag.getMessages().add(this);
     }
 
-    public void removeTag(TagEntity tag){
+    public void removeTag(TagEntity tag) {
         tags.remove(tag);
         tag.getMessages().remove(this);
     }

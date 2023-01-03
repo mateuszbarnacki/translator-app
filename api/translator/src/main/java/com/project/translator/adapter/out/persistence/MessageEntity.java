@@ -54,17 +54,6 @@ class MessageEntity {
     @JoinColumn(name = "original_message_id")
     private MessageEntity originalMessage;
 
-
-    public void addTag(TagEntity tag) {
-        tags.add(tag);
-        tag.getMessages().add(this);
-    }
-
-    public void removeTag(TagEntity tag) {
-        tags.remove(tag);
-        tag.getMessages().remove(this);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

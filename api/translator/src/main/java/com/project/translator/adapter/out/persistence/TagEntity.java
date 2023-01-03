@@ -30,10 +30,6 @@ class TagEntity {
 
     private String tag;
 
-    @ManyToMany(mappedBy = "tags")
-    private Set<MessageEntity> messages = new HashSet<>();
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

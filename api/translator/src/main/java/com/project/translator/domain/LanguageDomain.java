@@ -11,6 +11,4 @@ import java.util.Set;
 public class LanguageDomain {
     Long id;
     String language;
-    @Builder.Default
-    Set<MessageDomain> messages = Collections.emptySet();
 }

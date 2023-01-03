@@ -11,6 +11,4 @@ import java.util.Set;
 public class TagDomain {
     Long id;
     String tag;
-    @Builder.Default
-    Set<MessageDomain> messages = Collections.emptySet();
 }

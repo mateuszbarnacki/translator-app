@@ -89,8 +89,9 @@ class MessagePersistenceAdapter implements MessagePort {
         if(!isLanguageEnglish(languageEntity)) {
             throw new OriginalMessageNotInEnglishException(languageEntity.getLanguage());
         }
+        final var tags = getTagEntities(messageDetails.tags());
         messageEntity.setContent(messageDetails.content());
-        messageEntity.setTags(getTagEntities(messageDetails.tags()));
+        tags.forEach(messageEntity::addTag);
 
         log.info("Original message updated successfully = <{}>", messageEntity);
     }
@@ -109,7 +110,7 @@ class MessagePersistenceAdapter implements MessagePort {
         messageEntity.setOriginalMessage(originalMessage);
         messageEntity.setLanguage(languageEntity);
         messageEntity.setContent(messageDetails.content());
-        messageEntity.setTags(tags);
+        tags.forEach(messageEntity::addTag);
 
         log.info("Message translation updated successfully = <{}>", messageEntity);
     }
@@ -130,10 +131,11 @@ class MessagePersistenceAdapter implements MessagePort {
         log.info("Creating original message from message details = <{}>", messageDetails);
 
         final var tagIds = messageDetails.tags();
+        final var tags = getTagEntities(tagIds);
         final var messageEntity = new MessageEntity();
         messageEntity.setLanguage(languageEntity);
         messageEntity.setContent(messageDetails.content());
-        messageEntity.setTags(getTagEntities(tagIds));
+        tags.forEach(messageEntity::addTag);
         messageRepository.save(messageEntity);
 
         log.info("Original message created successfully = <{}>", messageEntity);
@@ -151,7 +153,7 @@ class MessagePersistenceAdapter implements MessagePort {
         messageEntity.setOriginalMessage(originalMessage);
         messageEntity.setContent(messageDetails.content());
         messageEntity.setLanguage(getLanguageEntity(languageId));
-        messageEntity.setTags(tags);
+        tags.forEach(messageEntity::addTag);
         messageRepository.save(messageEntity);
 
         log.info("Message translation created successfully = <{}>", messageEntity);

@@ -48,11 +48,14 @@ class MessageEntity {
     )
     private Set<TagEntity> tags = new HashSet<>();
 
-    @ManyToOne(
-            cascade = CascadeType.REMOVE,
-            fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "original_message_id")
     private MessageEntity originalMessage;
+
+    public void addTag(TagEntity tag) {
+        tags.add(tag);
+        tag.getMessages().add(this);
+    }
 
     @Override
     public boolean equals(Object o) {

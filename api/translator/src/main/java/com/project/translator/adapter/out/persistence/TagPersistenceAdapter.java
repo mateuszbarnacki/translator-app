@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,8 +55,7 @@ class TagPersistenceAdapter implements TagPort {
         log.info("Updating tag from tag details = <{}> with id = <{}>",
                 tagDetails, id);
 
-        final var tagEntity = tagRepository.findById(id)
-                .orElseThrow(() -> new TagNotFoundException(id));
+        final var tagEntity = getTagEntity(id);
         tagEntity.setTag(tagDetails.tag());
 
         log.info("Tag updated successfully = <{}>", tagEntity);
@@ -65,8 +65,20 @@ class TagPersistenceAdapter implements TagPort {
     public void deleteTag(Long id) {
         log.info("Deleting tag with id = <{}>", id);
 
-        tagRepository.deleteById(id);
+        final var tagEntity = getTagEntity(id);
+        final var messages = tagEntity.getMessages();
+
+        messages.forEach(
+                message -> message.getTags().remove(tagEntity)
+        );
+
+        tagRepository.delete(tagEntity);
 
         log.info("Tag deleted successfully with id = <{}>", id);
+    }
+
+    private TagEntity getTagEntity(Long id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new TagNotFoundException(id));
     }
 }

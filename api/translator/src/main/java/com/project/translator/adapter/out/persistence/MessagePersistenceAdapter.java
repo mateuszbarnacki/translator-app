@@ -73,8 +73,13 @@ class MessagePersistenceAdapter implements MessagePort {
     public void deleteMessage(@NotNull Long id) {
         log.info("Deleting message with id = <{}>", id);
 
-        messageRepository.deleteById(id);
+        final var messageEntity = getMessageEntity(id);
 
+        if(messageEntity.getOriginalMessage() == null) {
+            final var messages = messageRepository.findByOriginalMessage(messageEntity);
+            messageRepository.deleteAll(messages);
+        }
+        messageRepository.delete(messageEntity);
         log.info("Message deleted successfully with id = <{}>", id);
     }
 

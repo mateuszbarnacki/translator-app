@@ -38,10 +38,9 @@ class MessageEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity language;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.MERGE
+    )
     @JoinTable(name = "message_tag",
             joinColumns = @JoinColumn(name = "message_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")

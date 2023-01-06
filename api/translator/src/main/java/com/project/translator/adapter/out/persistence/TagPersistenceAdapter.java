@@ -3,24 +3,23 @@ package com.project.translator.adapter.out.persistence;
 import com.project.common.PersistenceAdapter;
 import com.project.translator.application.port.in.TagDetails;
 import com.project.translator.application.port.out.TagPort;
-import com.project.translator.domain.exception.TagNotFoundException;
 import com.project.translator.domain.TagDomain;
+import com.project.translator.domain.exception.TagNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @PersistenceAdapter
 class TagPersistenceAdapter implements TagPort {
-    
+
     private final TagRepository tagRepository;
-    
+
     private final TranslatorMapper translatorMapper;
-    
+
     @Override
     public Collection<TagDomain> getTags() {
         log.info("Loading all tags...");

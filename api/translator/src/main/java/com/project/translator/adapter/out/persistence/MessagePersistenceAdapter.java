@@ -6,8 +6,10 @@ import com.project.translator.application.port.out.MessagePort;
 import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.exception.LanguageNotFoundException;
 import com.project.translator.domain.exception.MessageNotFoundException;
+import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TagNotFoundException;
+import com.project.translator.domain.exception.TranslationCannotBeConvertedException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +25,11 @@ import java.util.stream.Collectors;
 @PersistenceAdapter
 class MessagePersistenceAdapter implements MessagePort {
 
+    private static final String ENGLISH_LANGUAGE = "English";
     private final MessageRepository messageRepository;
     private final LanguageRepository languageRepository;
     private final TagRepository tagRepository;
     private final TranslatorMapper translatorMapper;
-    private static final String ENGLISH_LANGUAGE = "English";
 
     @Override
     public Collection<MessageDomain> getMessages() {
@@ -49,10 +51,9 @@ class MessagePersistenceAdapter implements MessagePort {
 
     @Override
     public void createMessage(@NotNull MessageDetails messageDetails) {
-        if(messageDetails.original_message() == null) {
+        if (messageDetails.original_message() == null) {
             createOriginalMessage(messageDetails);
-        }
-        else {
+        } else {
             createMessageTranslation(messageDetails);
         }
     }
@@ -61,10 +62,9 @@ class MessagePersistenceAdapter implements MessagePort {
     public void updateMessage(@NotNull Long id, @NotNull MessageDetails messageDetails) {
         final var messageEntity = getMessageEntity(id);
 
-        if(messageEntity.getOriginalMessage() == null){
+        if (messageEntity.getOriginalMessage() == null) {
             updateOriginalMessage(messageEntity, messageDetails);
-        }
-        else {
+        } else {
             updateMessageTranslation(messageEntity, messageDetails);
         }
     }
@@ -75,7 +75,7 @@ class MessagePersistenceAdapter implements MessagePort {
 
         final var messageEntity = getMessageEntity(id);
 
-        if(messageEntity.getOriginalMessage() == null) {
+        if (messageEntity.getOriginalMessage() == null) {
             final var messages = messageRepository.findByOriginalMessage(messageEntity);
             messageRepository.deleteAll(messages);
         }
@@ -88,10 +88,10 @@ class MessagePersistenceAdapter implements MessagePort {
 
         final var originalMessageId = messageDetails.original_message();
         final var languageEntity = getLanguageEntity(messageDetails.language());
-        if(originalMessageId != null) {
-            throw new RuntimeException("Original message cannot contain original message id");
+        if (originalMessageId != null) {
+            throw new OriginalMessageIsNotNullException();
         }
-        if(!isLanguageEnglish(languageEntity)) {
+        if (!isLanguageEnglish(languageEntity)) {
             throw new OriginalMessageNotInEnglishException(languageEntity.getLanguage());
         }
         final var tags = getTagEntities(messageDetails.tags());
@@ -106,8 +106,8 @@ class MessagePersistenceAdapter implements MessagePort {
 
         final var originalMessageId = messageDetails.original_message();
         final var languageEntity = getLanguageEntity(messageDetails.language());
-        if(originalMessageId == null) {
-            throw new RuntimeException("Message translation cannot be converted to original message");
+        if (originalMessageId == null) {
+            throw new TranslationCannotBeConvertedException();
         }
         final var originalMessage = getMessageEntity(originalMessageId);
         final var tags = new HashSet<>(originalMessage.getTags());
@@ -124,10 +124,9 @@ class MessagePersistenceAdapter implements MessagePort {
     private void createOriginalMessage(MessageDetails messageDetails) {
         final var languageId = messageDetails.language();
         final var languageEntity = getLanguageEntity(languageId);
-        if(isLanguageEnglish(languageEntity)) {
+        if (isLanguageEnglish(languageEntity)) {
             createValidOriginalMessage(messageDetails, languageEntity);
-        }
-        else {
+        } else {
             throw new OriginalMessageNotInEnglishException(languageEntity.getLanguage());
         }
     }
@@ -176,7 +175,7 @@ class MessagePersistenceAdapter implements MessagePort {
 
     private Set<TagEntity> getTagEntities(List<Long> tagIds) {
         final var tagEntities = new HashSet<TagEntity>();
-        if(tagIds != null) {
+        if (tagIds != null) {
             tagIds.forEach(id -> tagEntities.add(getTagEntity(id)));
         }
         return tagEntities;
@@ -188,6 +187,6 @@ class MessagePersistenceAdapter implements MessagePort {
     }
 
     private boolean isLanguageEnglish(LanguageEntity languageEntity) {
-        return languageEntity.getLanguage().equals(ENGLISH_LANGUAGE);
+        return languageEntity.getLanguage().equalsIgnoreCase(ENGLISH_LANGUAGE);
     }
 }

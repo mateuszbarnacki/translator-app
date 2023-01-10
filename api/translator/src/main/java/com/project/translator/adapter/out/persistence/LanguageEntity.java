@@ -42,11 +42,6 @@ class LanguageEntity {
         messageEntity.setLanguage(this);
     }
 
-    public void removeMessage(MessageEntity messageEntity){
-        messages.remove(messageEntity);
-        messageEntity.setLanguage(null);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

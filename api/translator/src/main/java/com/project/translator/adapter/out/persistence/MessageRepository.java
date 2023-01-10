@@ -17,4 +17,6 @@ interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     List<MessageEntity> findByContentContainingIgnoreCase(String content);
 
     Optional<MessageEntity> findByOriginalMessageId(Long id);
+
+    List<MessageEntity> findByOriginalMessage(MessageEntity originalMessage);
 }

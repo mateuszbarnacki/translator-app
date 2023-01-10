@@ -38,31 +38,22 @@ class MessageEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity language;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.MERGE
+    )
     @JoinTable(name = "message_tag",
             joinColumns = @JoinColumn(name = "message_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<TagEntity> tags = new HashSet<>();
 
-    @ManyToOne(
-            cascade = CascadeType.REMOVE,
-            fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "original_message_id")
     private MessageEntity originalMessage;
-
 
     public void addTag(TagEntity tag) {
         tags.add(tag);
         tag.getMessages().add(this);
-    }
-
-    public void removeTag(TagEntity tag) {
-        tags.remove(tag);
-        tag.getMessages().remove(this);
     }
 
     @Override

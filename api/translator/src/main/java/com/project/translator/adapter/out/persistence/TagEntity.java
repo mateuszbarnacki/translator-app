@@ -1,6 +1,7 @@
 package com.project.translator.adapter.out.persistence;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,9 +31,8 @@ class TagEntity {
 
     private String tag;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tags")
     private Set<MessageEntity> messages = new HashSet<>();
-
 
     @Override
     public boolean equals(Object o) {

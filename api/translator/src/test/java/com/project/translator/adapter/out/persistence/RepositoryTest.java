@@ -25,6 +25,7 @@ class RepositoryTest {
     @BeforeAll
     void setUp() {
         TagEntity tag = RandomEntityFactory.generateTag("testTag");
+        tagRepository.save(tag);
         MessageEntity message = RandomEntityFactory.generateMessage();
         message.addTag(tag);
 

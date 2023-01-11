@@ -15,5 +15,5 @@ const initMocks = (instance) => {
 }
 
 export {
-  initMocks,
+  initMocks
 }

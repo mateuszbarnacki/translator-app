@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+
+  cisco:
+    container_name: cisco
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '1337:80'

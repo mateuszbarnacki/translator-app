@@ -1,8 +1,8 @@
 package com.project.translator.domain.exception;
 
-public class OriginalMessageIsNotNullException extends RuntimeException {
+public class OriginalMessageIsNotNullException extends TranslatorException {
 
     public OriginalMessageIsNotNullException() {
-        super("Original message cannot contain original message id");
+        super("Original message cannot contain original message id", ErrorCode.BAD_REQUEST);
     }
 }

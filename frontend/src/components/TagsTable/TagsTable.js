@@ -7,7 +7,7 @@ const TagsTable = () => {
   const [tags, setTags] = useState([])
   const fetchTags = () => {
 
-    axios.get(`/tags/`)
+    axios.get(`/tags`)
       .then(res => {
         if (res.status === 200) {
           setTags(res.data)

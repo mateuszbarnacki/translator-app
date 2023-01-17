@@ -6,7 +6,7 @@ import BaseTable from "../BaseTable";
 const LanguagesTable = () => {
   const [languages, setLanguages] = useState([])
   const fetchLanguages = () => {
-    axios.get(`/languages/`)
+    axios.get(`/languages`)
       .then(res => {
         if (res.status === 200) {
           setLanguages(res.data)

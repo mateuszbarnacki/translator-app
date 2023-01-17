@@ -5,7 +5,7 @@ import BaseTable from "../BaseTable";
 const MessagesTable = () => {
   const [messages, setMessages] = useState([])
   const fetchMessages = () => {
-    axios.get(`/messages/`)
+    axios.get(`/messages`)
       .then(res => {
         if (res.status === 200) {
           setMessages(res.data)

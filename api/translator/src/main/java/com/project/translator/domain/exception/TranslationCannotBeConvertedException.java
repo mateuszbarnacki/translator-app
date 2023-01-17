@@ -1,8 +1,8 @@
 package com.project.translator.domain.exception;
 
-public class TranslationCannotBeConvertedException extends RuntimeException {
+public class TranslationCannotBeConvertedException extends TranslatorException {
 
     public TranslationCannotBeConvertedException() {
-        super("Message translation cannot be converted to original message");
+        super("Message translation cannot be converted to original message", ErrorCode.BAD_REQUEST);
     }
 }

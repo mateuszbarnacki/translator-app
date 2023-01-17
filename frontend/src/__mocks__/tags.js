@@ -1,6 +1,6 @@
 const initTagsMock = (mock) => {
   mock
-    .onGet('/tags/')
+    .onGet('/tags')
     .reply(() => {
       const tags = [
         {

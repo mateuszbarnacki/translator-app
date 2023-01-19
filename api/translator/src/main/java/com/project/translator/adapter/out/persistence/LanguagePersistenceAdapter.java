@@ -19,6 +19,8 @@ class LanguagePersistenceAdapter implements LanguagePort {
 
     private final LanguageRepository languageRepository;
 
+    private final MessageRepository messageRepository;
+
     private final TranslatorMapper translatorMapper;
 
     @Override
@@ -65,8 +67,17 @@ class LanguagePersistenceAdapter implements LanguagePort {
     @Override
     public void deleteLanguage(@NotNull Long id) {
         log.info("Deleting language with id = <{}>", id);
+        final var languageEntity = languageRepository.findById(id)
+                .orElseThrow(() -> new LanguageNotFoundException(id));
 
-        languageRepository.deleteById(id);
+        final var messages = languageEntity.getMessages();
+        final var translations = messages.stream()
+                .map(messageRepository::findByOriginalMessage).toList();
+
+        translations.forEach(messageRepository::deleteAll);
+        messageRepository.deleteAll(messages);
+
+        languageRepository.delete(languageEntity);
 
         log.info("Language deleted successfully with id = <{}>", id);
     }

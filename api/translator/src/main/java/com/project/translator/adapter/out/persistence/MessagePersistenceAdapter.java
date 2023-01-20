@@ -151,6 +151,11 @@ class MessagePersistenceAdapter implements MessagePort {
         final var languageId = messageDetails.language();
         final var originalMessageId = messageDetails.original_message();
         final var originalMessage = getMessageEntity(originalMessageId);
+        final var originalMessLang = originalMessage.getLanguage();
+        if(!isLanguageEnglish(originalMessLang)) {
+            throw new OriginalMessageNotInEnglishException(originalMessLang.getLanguage());
+        }
+
         final var tags = new HashSet<>(originalMessage.getTags());
 
         final var messageEntity = new MessageEntity();

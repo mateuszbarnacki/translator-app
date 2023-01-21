@@ -34,7 +34,7 @@ class MessageEntity {
 
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "language_id")
     private LanguageEntity language;
 

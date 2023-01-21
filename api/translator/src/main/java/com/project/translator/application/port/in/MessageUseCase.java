@@ -10,6 +10,8 @@ public interface MessageUseCase {
 
     List<MessageDomain> findMessagesByLanguage(String language);
 
+    List<MessageDomain> findMessagesByTag(String tag);
+
     MessageDomain getMessageById(Long id);
 
     void createMessage(MessageDetails messageDetails);

@@ -29,6 +29,11 @@ public class MessageService implements MessageUseCase {
     }
 
     @Override
+    public List<MessageDomain> findMessagesByTag(String tag) {
+        return messagePort.findMessageByTag(tag);
+    }
+
+    @Override
     public MessageDomain getMessageById(Long id) {
         return messagePort.getMessageById(id);
     }

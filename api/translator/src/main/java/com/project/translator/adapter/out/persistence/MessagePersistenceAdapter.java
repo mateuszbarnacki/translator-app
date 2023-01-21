@@ -7,6 +7,7 @@ import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.exception.LanguageNotFoundException;
 import com.project.translator.domain.exception.MessageNotFoundException;
 import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
+import com.project.translator.domain.exception.MessagesSearchByTagNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TagNotFoundException;
@@ -46,6 +47,18 @@ class MessagePersistenceAdapter implements MessagePort {
         List<MessageEntity> messageEntities = messageRepository.findByLanguage_languageContainingIgnoreCase(language);
         if (messageEntities.isEmpty()) {
             throw new MessagesSearchByLanguageNotFoundException(language);
+        }
+
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessageByTag(String tag) {
+        log.info("Loading message by tag = {}", tag);
+
+        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContaining(tag);
+        if (messageEntities.isEmpty()) {
+            throw new MessagesSearchByTagNotFoundException(tag);
         }
 
         return translatorMapper.toMessageDomainList(messageEntities);

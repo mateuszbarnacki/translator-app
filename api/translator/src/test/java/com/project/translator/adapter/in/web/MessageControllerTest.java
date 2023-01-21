@@ -8,6 +8,7 @@ import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
 import com.project.translator.domain.LanguageDomain;
 import com.project.translator.domain.MessageDomain;
+import com.project.translator.domain.TagDomain;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -135,13 +137,32 @@ class MessageControllerTest {
         assertThat(actual).containsExactlyElementsOf(expectedMessages);
     }
 
+
+    @Test
+    void shouldFindMessagesByTag() throws Exception {
+        // given
+        List<MessageDomain> expectedMessages = buildGetMessagesResult();
+        when(useCase.findMessagesByTag(anyString())).thenReturn(expectedMessages);
+        // when
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.get("/messages/tag").param("value", "testTag")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+
+        // then
+        List<MessageDomain> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertThat(actual).containsExactlyElementsOf(expectedMessages);
+    }
+
     private List<MessageDomain> buildGetMessagesResult() {
         return List.of(MessageDomain.builder()
                 .id(2L)
                 .originalMessage(MessageDomain.builder().build())
                 .language(LanguageDomain.builder().id(1L).language("English").build())
                 .content("Lorem ipsum")
-                .tags(Collections.emptySet()).build());
+                .tags(buildTagDomain()).build());
     }
 
     private MessageDomain buildGetMessageResult() {
@@ -150,7 +171,11 @@ class MessageControllerTest {
                 .originalMessage(MessageDomain.builder().id(3L).content("Test").build())
                 .language(LanguageDomain.builder().id(4L).language("Polish").build())
                 .content("Test")
-                .tags(Collections.emptySet())
+                .tags(buildTagDomain())
                 .build();
+    }
+
+    private Set<TagDomain> buildTagDomain() {
+        return Set.of(TagDomain.builder().tag("testTag").build());
     }
 }

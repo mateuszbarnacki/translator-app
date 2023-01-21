@@ -3,6 +3,7 @@ package com.project.translator.adapter.in.web.exception;
 import com.project.translator.domain.exception.LanguageNotFoundException;
 import com.project.translator.domain.exception.MessageNotFoundException;
 import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
+import com.project.translator.domain.exception.MessagesSearchByTagNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.RestError;
@@ -34,6 +35,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({MessagesSearchByLanguageNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<RestError> handleMessagesSearchByLanguageNotFoundException(MessagesSearchByLanguageNotFoundException e) {
+        return new ResponseEntity<>(buildRestError(e), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({MessagesSearchByTagNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<RestError> handleMessagesSearchByTagNotFoundException(MessagesSearchByTagNotFoundException e) {
         return new ResponseEntity<>(buildRestError(e), HttpStatus.NOT_FOUND);
     }
 

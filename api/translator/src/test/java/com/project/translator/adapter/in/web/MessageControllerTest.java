@@ -123,8 +123,9 @@ class MessageControllerTest {
         List<MessageDomain> expectedMessages = buildGetMessagesResult();
         when(useCase.findMessagesByLanguage(anyString())).thenReturn(expectedMessages);
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/messages/search").param("language", "testLanguage")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.get("/messages/search/language").param("value", "testLanguage")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
         // then

@@ -59,7 +59,7 @@ class RepositoryTest {
     void findMessagesByTag() {
         // given
         // when
-        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContainingIgnoreCase("test");
+        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContaining("test");
         // then
         assertThat(messageEntities).hasSize(1);
     }

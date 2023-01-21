@@ -15,7 +15,7 @@ interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     List<MessageEntity> findByLanguage_languageContainingIgnoreCase(String language);
 
     @EntityGraph(attributePaths = {"language", "originalMessage", "tags"})
-    List<MessageEntity> findByTags_tagContainingIgnoreCase(String tag);
+    List<MessageEntity> findByTags_tagContaining(String tag);
 
     List<MessageEntity> findByContentContainingIgnoreCase(String content);
 

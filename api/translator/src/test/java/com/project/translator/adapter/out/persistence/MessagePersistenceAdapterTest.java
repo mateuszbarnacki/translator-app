@@ -20,6 +20,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
@@ -214,10 +215,10 @@ class MessagePersistenceAdapterTest {
                 .containsOnly(tuple(content, expectedLanguage));
     }
 
-    @Test
-    void findMessageByTag_should_throw_exception() {
+    @ParameterizedTest
+    @ValueSource(strings = {"MeSsAgE", "not", "notExistingTag"})
+    void findMessageByTag_should_throw_exception(String tag) {
         // given
-        final String tag = "notExistingTag";
         // when
         MessagesSearchByTagNotFoundException exception = assertThrows(
                 MessagesSearchByTagNotFoundException.class,
@@ -253,8 +254,7 @@ class MessagePersistenceAdapterTest {
         List<Tuple> expectedSingleMessage = List.of(tuple(POLISH_CONTENT, POLISH_LANGUAGE));
         return Stream.of(Arguments.of(NOTE_TAG, expectedAllMessages),
                 Arguments.of(MESSAGE_TAG, expectedSingleMessage),
-                Arguments.of("MeSsAgE", expectedSingleMessage),
-                Arguments.of("not", expectedAllMessages)
+                Arguments.of("Not", expectedAllMessages)
         );
     }
 

@@ -56,7 +56,7 @@ class MessagePersistenceAdapter implements MessagePort {
     public List<MessageDomain> findMessageByTag(String tag) {
         log.info("Loading message by tag = {}", tag);
 
-        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContainingIgnoreCase(tag);
+        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContaining(tag);
         if (messageEntities.isEmpty()) {
             throw new MessagesSearchByTagNotFoundException(tag);
         }

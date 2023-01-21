@@ -54,6 +54,16 @@ class RepositoryTest {
         assertThat(messageEntities).hasSize(2);
     }
 
+
+    @Test
+    void findMessagesByTag() {
+        // given
+        // when
+        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContainingIgnoreCase("test");
+        // then
+        assertThat(messageEntities).hasSize(1);
+    }
+
     @Test
     void findMessagesByTagId() {
         // given

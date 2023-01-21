@@ -9,9 +9,11 @@ import com.project.translator.application.port.out.TagPort;
 import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.exception.ErrorCode;
 import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
+import com.project.translator.domain.exception.MessagesSearchByTagNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TranslationCannotBeConvertedException;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -212,11 +214,47 @@ class MessagePersistenceAdapterTest {
                 .containsOnly(tuple(content, expectedLanguage));
     }
 
+    @Test
+    void findMessageByTag_should_throw_exception() {
+        // given
+        final String tag = "notExistingTag";
+        // when
+        MessagesSearchByTagNotFoundException exception = assertThrows(
+                MessagesSearchByTagNotFoundException.class,
+                () -> messageAdapter.findMessageByTag(tag));
+        // then
+        assertThat(exception.getMessage()).isEqualTo(
+                String.format("Message for tag=<%s> not found!", tag));
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+    }
+
+    @ParameterizedTest
+    @MethodSource("findMessageByTagArguments")
+    void findMessageByTag_should_return_messages(String tag, List<Tuple> expected) {
+        // given
+        // when
+        List<MessageDomain> actualMessages = messageAdapter.findMessageByTag(tag);
+        // then
+        assertThat(actualMessages).extracting("content", "language.language")
+                .contains(expected.toArray(new Tuple[0]));
+    }
+
     private Stream<Arguments> findMessageByLanguageArguments() {
         return Stream.of(Arguments.of(POLISH_LANGUAGE, POLISH_CONTENT, POLISH_LANGUAGE),
                 Arguments.of(ENGLISH_LANGUAGE, ENGLISH_CONTENT, ENGLISH_LANGUAGE),
                 Arguments.of("pOlIsH", POLISH_CONTENT, POLISH_LANGUAGE),
                 Arguments.of("pol", POLISH_CONTENT, POLISH_LANGUAGE)
+        );
+    }
+
+    private Stream<Arguments> findMessageByTagArguments() {
+        List<Tuple> expectedAllMessages = List.of(tuple(ENGLISH_CONTENT, ENGLISH_LANGUAGE),
+                tuple(POLISH_CONTENT, POLISH_LANGUAGE));
+        List<Tuple> expectedSingleMessage = List.of(tuple(POLISH_CONTENT, POLISH_LANGUAGE));
+        return Stream.of(Arguments.of(NOTE_TAG, expectedAllMessages),
+                Arguments.of(MESSAGE_TAG, expectedSingleMessage),
+                Arguments.of("MeSsAgE", expectedSingleMessage),
+                Arguments.of("not", expectedAllMessages)
         );
     }
 

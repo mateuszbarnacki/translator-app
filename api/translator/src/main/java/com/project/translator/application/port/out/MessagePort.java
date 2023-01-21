@@ -12,6 +12,8 @@ public interface MessagePort {
 
     List<MessageDomain> findMessageByLanguage(String language);
 
+    List<MessageDomain> findMessageByTag(String tag);
+
     MessageDomain getMessageById(Long id);
 
     void createMessage(MessageDetails messageDetails);

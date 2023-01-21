@@ -44,6 +44,11 @@ public class MessageController {
         return messageUseCase.findMessagesByLanguage(language);
     }
 
+    @GetMapping(value = "/search/tag")
+    List<MessageDomain> findMessagesByTag(@RequestParam("value") @NotNull(message = "missing tag param") String tag) {
+        return messageUseCase.findMessagesByTag(tag);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     void createMessage(@RequestBody @Valid MessageDetails messageDetails) {

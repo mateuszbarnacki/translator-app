@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor
 @UseCase
@@ -20,6 +21,11 @@ public class MessageService implements MessageUseCase {
     @Override
     public Collection<MessageDomain> getMessages() {
         return messagePort.getMessages();
+    }
+
+    @Override
+    public List<MessageDomain> findMessagesByLanguage(String language) {
+        return messagePort.findMessageByLanguage(language);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.project.translator.application.port.out.MessagePort;
 import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.exception.LanguageNotFoundException;
 import com.project.translator.domain.exception.MessageNotFoundException;
+import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TagNotFoundException;
@@ -18,7 +19,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,9 +36,19 @@ class MessagePersistenceAdapter implements MessagePort {
         log.info("Loading all messages...");
 
         final var messageEntities = messageRepository.findAll();
-        return messageEntities.stream()
-                .map(translatorMapper::toMessageDomain)
-                .collect(Collectors.toList());
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessageByLanguage(String language) {
+        log.info("Loading message by language = {}", language);
+
+        List<MessageEntity> messageEntities = messageRepository.findByLanguage_languageContainingIgnoreCase(language);
+        if (messageEntities.isEmpty()) {
+            throw new MessagesSearchByLanguageNotFoundException(language);
+        }
+
+        return translatorMapper.toMessageDomainList(messageEntities);
     }
 
     @Override

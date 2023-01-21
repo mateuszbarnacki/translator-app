@@ -4,10 +4,13 @@ import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.domain.MessageDomain;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface MessagePort {
 
     Collection<MessageDomain> getMessages();
+
+    List<MessageDomain> findMessageByLanguage(String language);
 
     MessageDomain getMessageById(Long id);
 

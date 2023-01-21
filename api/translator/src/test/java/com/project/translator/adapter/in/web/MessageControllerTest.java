@@ -2,6 +2,7 @@ package com.project.translator.adapter.in.web;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
@@ -11,11 +12,13 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,8 +28,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +39,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MessageControllerTest {
     private MockMvc mvc;
+    @Autowired
     private ObjectMapper objectMapper;
     @MockBean
     private MessageUseCase useCase;
@@ -41,7 +47,6 @@ class MessageControllerTest {
     @BeforeEach
     public void setUp() {
         mvc = MockMvcBuilders.standaloneSetup(new MessageController(useCase)).build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -110,6 +115,24 @@ class MessageControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(useCase).deleteMessage(anyLong());
+    }
+
+    @Test
+    void shouldFindMessagesByLanguage() throws Exception {
+        // given
+        List<MessageDomain> expectedMessages = buildGetMessagesResult();
+        when(useCase.findMessagesByLanguage(anyString())).thenReturn(expectedMessages);
+        // when
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.get("/messages/language").param("value", "testLanguage")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+
+        // then
+        List<MessageDomain> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertThat(actual).containsExactlyElementsOf(expectedMessages);
     }
 
     private List<MessageDomain> buildGetMessagesResult() {

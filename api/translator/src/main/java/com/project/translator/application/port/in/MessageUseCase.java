@@ -3,9 +3,12 @@ package com.project.translator.application.port.in;
 import com.project.translator.domain.MessageDomain;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface MessageUseCase {
     Collection<MessageDomain> getMessages();
+
+    List<MessageDomain> findMessagesByLanguage(String language);
 
     MessageDomain getMessageById(Long id);
 

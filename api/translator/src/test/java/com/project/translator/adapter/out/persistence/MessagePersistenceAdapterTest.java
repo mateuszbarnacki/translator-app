@@ -3,21 +3,32 @@ package com.project.translator.adapter.out.persistence;
 import com.project.translator.application.port.in.LanguageDetails;
 import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.TagDetails;
+import com.project.translator.application.port.out.LanguagePort;
+import com.project.translator.application.port.out.MessagePort;
+import com.project.translator.application.port.out.TagPort;
+import com.project.translator.domain.MessageDomain;
+import com.project.translator.domain.exception.ErrorCode;
+import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TranslationCannotBeConvertedException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,11 +36,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import({MessagePersistenceAdapter.class,
         LanguagePersistenceAdapter.class,
-        TagPersistenceAdapter.class})
+        TagPersistenceAdapter.class,
+        TranslatorMapperImpl.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class MessagePersistenceAdapterTest {
 
     private static final String ENGLISH_LANGUAGE = "English";
+    private static final String ENGLISH_CONTENT = "Original message";
     private static final String POLISH_LANGUAGE = "Polish";
+    private static final String POLISH_CONTENT = "Message translation";
     private static final String NOTE_TAG = "Note";
     private static final String MESSAGE_TAG = "Message";
     private static final Long ORIGINAL_MESSAGE_ID = 1L;
@@ -37,21 +52,21 @@ class MessagePersistenceAdapterTest {
     private static final Long ENGLISH_LANG_ID = 1L;
     private static final Long POLISH_LANG_ID = 2L;
     @Autowired
-    private MessagePersistenceAdapter messageAdapter;
+    private MessagePort messageAdapter;
 
     @Autowired
-    private LanguagePersistenceAdapter languageAdapter;
+    private LanguagePort languageAdapter;
 
     @Autowired
-    private TagPersistenceAdapter tagAdapter;
+    private TagPort tagAdapter;
 
     @Autowired
     private MessageRepository messageRepository;
 
-    @MockBean
+    @Autowired
     private TranslatorMapper translatorMapper;
 
-    @BeforeAll
+    @BeforeEach
     void setup() {
         languageAdapter.createLanguage(createLanguageDetails(ENGLISH_LANGUAGE));
         languageAdapter.createLanguage(createLanguageDetails(POLISH_LANGUAGE));
@@ -59,8 +74,8 @@ class MessagePersistenceAdapterTest {
         tagAdapter.createTag(createTagDetails(NOTE_TAG));
         tagAdapter.createTag(createTagDetails(MESSAGE_TAG));
 
-        messageAdapter.createMessage(createOriginalMessageDetails("Original message", ENGLISH_LANG_ID));
-        messageAdapter.createMessage(createTranslationMessageDetails("Message translation"));
+        messageAdapter.createMessage(createOriginalMessageDetails(ENGLISH_CONTENT, ENGLISH_LANG_ID));
+        messageAdapter.createMessage(createTranslationMessageDetails(POLISH_CONTENT));
     }
 
     @Test
@@ -107,7 +122,8 @@ class MessagePersistenceAdapterTest {
     void shouldThrowWhenTryingAddOriginalMessage() {
         final var originalMessage = messageRepository.findById(ORIGINAL_MESSAGE_ID).get();
         final var content = "Update original message id in original message";
-        final var updatedMessageDetails = new MessageDetails(ORIGINAL_MESSAGE_ID, ENGLISH_LANG_ID, content, List.of(1L, 2L));
+        final var updatedMessageDetails = new MessageDetails(ORIGINAL_MESSAGE_ID, ENGLISH_LANG_ID, content,
+                List.of(1L, 2L));
         assertThrows(OriginalMessageIsNotNullException.class,
                 () -> messageAdapter.updateMessage(originalMessage.getId(), updatedMessageDetails));
     }
@@ -159,7 +175,8 @@ class MessagePersistenceAdapterTest {
         messageAdapter.createMessage(createOriginalMessageDetails(content, ENGLISH_LANG_ID));
         final var originalMessage = messageRepository.findByContentContainingIgnoreCase(content).get(0);
         final var translationContent = "Message translation to delete";
-        messageAdapter.createMessage(new MessageDetails(originalMessage.getId(), POLISH_LANG_ID, translationContent, Collections.emptyList()));
+        messageAdapter.createMessage(new MessageDetails(originalMessage.getId(), POLISH_LANG_ID, translationContent,
+                Collections.emptyList()));
         assertThat(messageRepository.findAll()).hasSize(4);
         messageAdapter.deleteMessage(originalMessage.getId());
         assertThat(messageRepository.findAll()).hasSize(2);
@@ -168,6 +185,39 @@ class MessagePersistenceAdapterTest {
     @Test
     void shouldFindAllMessages() {
         assertThat(messageAdapter.getMessages()).hasSize(2);
+    }
+
+    @Test
+    void findMessageByLanguage_should_throw_exception() {
+        // given
+        final String language = "notSupportedLanguage";
+        // when
+        MessagesSearchByLanguageNotFoundException exception = assertThrows(
+                MessagesSearchByLanguageNotFoundException.class,
+                () -> messageAdapter.findMessageByLanguage(language));
+        // then
+        assertThat(exception.getMessage()).isEqualTo(
+                String.format("Message for language=<%s> not found!", language));
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+    }
+
+    @ParameterizedTest
+    @MethodSource("findMessageByLanguageArguments")
+    void findMessageByLanguage_should_return_messages(String language, String content, String expectedLanguage) {
+        // given
+        // when
+        List<MessageDomain> actualMessages = messageAdapter.findMessageByLanguage(language);
+        // then
+        assertThat(actualMessages).extracting("content", "language.language")
+                .containsOnly(tuple(content, expectedLanguage));
+    }
+
+    private Stream<Arguments> findMessageByLanguageArguments() {
+        return Stream.of(Arguments.of(POLISH_LANGUAGE, POLISH_CONTENT, POLISH_LANGUAGE),
+                Arguments.of(ENGLISH_LANGUAGE, ENGLISH_CONTENT, ENGLISH_LANGUAGE),
+                Arguments.of("pOlIsH", POLISH_CONTENT, POLISH_LANGUAGE),
+                Arguments.of("pol", POLISH_CONTENT, POLISH_LANGUAGE)
+        );
     }
 
     private MessageDetails createOriginalMessageDetails(String content, Long language) {

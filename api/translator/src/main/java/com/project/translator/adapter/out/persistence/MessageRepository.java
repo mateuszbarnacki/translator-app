@@ -1,5 +1,6 @@
 package com.project.translator.adapter.out.persistence;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -10,6 +11,7 @@ interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
     List<MessageEntity> findByTagsId(Long id);
 
+    @EntityGraph(attributePaths = {"language", "originalMessage", "tags"})
     List<MessageEntity> findByLanguage_languageContainingIgnoreCase(String language);
 
     List<MessageEntity> findByContentContainingIgnoreCase(String content);

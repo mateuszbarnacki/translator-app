@@ -39,12 +39,12 @@ public class MessageController {
     }
 
 
-    @GetMapping(value = "/search/language")
+    @GetMapping(value = "/language")
     List<MessageDomain> findMessagesByLanguage(@RequestParam("value") @NotNull(message = "missing language param") String language) {
         return messageUseCase.findMessagesByLanguage(language);
     }
 
-    @GetMapping(value = "/search/tag")
+    @GetMapping(value = "/tag")
     List<MessageDomain> findMessagesByTag(@RequestParam("value") @NotNull(message = "missing tag param") String tag) {
         return messageUseCase.findMessagesByTag(tag);
     }

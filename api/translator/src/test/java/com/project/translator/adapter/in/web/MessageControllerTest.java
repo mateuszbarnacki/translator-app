@@ -126,7 +126,7 @@ class MessageControllerTest {
         when(useCase.findMessagesByLanguage(anyString())).thenReturn(expectedMessages);
         // when
         MvcResult result = mvc.perform(
-                        MockMvcRequestBuilders.get("/messages/search/language").param("value", "testLanguage")
+                        MockMvcRequestBuilders.get("/messages/language").param("value", "testLanguage")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
@@ -137,6 +137,7 @@ class MessageControllerTest {
         assertThat(actual).containsExactlyElementsOf(expectedMessages);
     }
 
+
     @Test
     void shouldFindMessagesByTag() throws Exception {
         // given
@@ -144,7 +145,7 @@ class MessageControllerTest {
         when(useCase.findMessagesByTag(anyString())).thenReturn(expectedMessages);
         // when
         MvcResult result = mvc.perform(
-                        MockMvcRequestBuilders.get("/messages/search/tag").param("value", "testTag")
+                        MockMvcRequestBuilders.get("/messages/tag").param("value", "testTag")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 

@@ -14,6 +14,10 @@ public interface MessagePort {
 
     List<MessageDomain> findMessageByTag(String tag);
 
+    List<MessageDomain> findMessageByOriginalMessage(Long originalMessageId);
+
+    List<MessageDomain> findMessagesByContent(String content);
+
     MessageDomain getMessageById(Long id);
 
     void createMessage(MessageDetails messageDetails);

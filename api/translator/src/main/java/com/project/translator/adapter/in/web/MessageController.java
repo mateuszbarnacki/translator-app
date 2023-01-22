@@ -49,6 +49,19 @@ public class MessageController {
         return messageUseCase.findMessagesByTag(tag);
     }
 
+    @GetMapping(value = "/original-message")
+    List<MessageDomain> findMessagesByOriginalMessage(@RequestParam("value")
+        @NotNull(message = "missing original message id param") Long originalMessageId) {
+        return messageUseCase.findMessagesByOriginalMessage(originalMessageId);
+    }
+
+    @GetMapping(value = "/content")
+    List<MessageDomain> findMessagesByContent(@RequestParam("value")
+    @NotNull(message = "missing content param") String content) {
+        return messageUseCase.findMessagesByContent(content);
+    }
+
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     void createMessage(@RequestBody @Valid MessageDetails messageDetails) {

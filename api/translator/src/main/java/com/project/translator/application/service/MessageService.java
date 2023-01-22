@@ -34,6 +34,16 @@ public class MessageService implements MessageUseCase {
     }
 
     @Override
+    public List<MessageDomain> findMessagesByOriginalMessage(Long originalMessageId){
+     return messagePort.findMessageByOriginalMessage(originalMessageId);
+    }
+
+    @Override
+    public List<MessageDomain> findMessagesByContent(String content) {
+        return messagePort.findMessagesByContent(content);
+    }
+
+    @Override
     public MessageDomain getMessageById(Long id) {
         return messagePort.getMessageById(id);
     }

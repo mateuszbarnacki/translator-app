@@ -12,6 +12,10 @@ public interface MessageUseCase {
 
     List<MessageDomain> findMessagesByTag(String tag);
 
+    List<MessageDomain> findMessagesByOriginalMessage(Long originalMessageId);
+
+    List<MessageDomain> findMessagesByContent(String content);
+
     MessageDomain getMessageById(Long id);
 
     void createMessage(MessageDetails messageDetails);

@@ -2,9 +2,10 @@ package com.project.translator.adapter.in.web;
 
 import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
-import com.project.translator.domain.MessageDomain;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.project.translator.application.port.out.MessageDto;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class MessageController {
 
     @Operation(summary = "Returns all messages")
     @GetMapping
-    Collection<MessageDomain> getMessages() {
+    Collection<MessageDto> getMessages() {
         return messageUseCase.getMessages();
     }
 
@@ -42,32 +43,32 @@ public class MessageController {
     @Operation(summary = "Returns message by id")
 
     @GetMapping(value = "/{id}")
-    MessageDomain getById(@PathVariable("id") Long id) {
+    MessageDto getById(@PathVariable("id") Long id) {
         return messageUseCase.getMessageById(id);
     }
 
     @Operation(summary = "Returns message written in given language")
     @GetMapping(value = "/language")
-    List<MessageDomain> findMessagesByLanguage(@RequestParam("value") @NotNull(message = "missing language param") String language) {
+    List<MessageDto> findMessagesByLanguage(@RequestParam("value") @NotNull(message = "missing language param") String language) {
         return messageUseCase.findMessagesByLanguage(language);
     }
 
     @Operation(summary = "Returns message to which given tag is assigned")
     @GetMapping(value = "/tag")
-    List<MessageDomain> findMessagesByTag(@RequestParam("value") @NotNull(message = "missing tag param") String tag) {
+    List<MessageDto> findMessagesByTag(@RequestParam("value") @NotNull(message = "missing tag param") String tag) {
         return messageUseCase.findMessagesByTag(tag);
     }
 
     @Operation(summary = "Returns messages which have the same original message given by id")
     @GetMapping(value = "/original-message")
-    List<MessageDomain> findMessagesByOriginalMessage(@RequestParam("value")
+    List<MessageDto> findMessagesByOriginalMessage(@RequestParam("value")
         @NotNull(message = "missing original message id param") Long originalMessageId) {
         return messageUseCase.findMessagesByOriginalMessage(originalMessageId);
     }
 
     @Operation(summary = "Returns messages which contains given content")
     @GetMapping(value = "/content")
-    List<MessageDomain> findMessagesByContent(@RequestParam("value")
+    List<MessageDto> findMessagesByContent(@RequestParam("value")
     @NotNull(message = "missing content param") String content) {
         return messageUseCase.findMessagesByContent(content);
     }

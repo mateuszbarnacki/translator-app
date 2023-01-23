@@ -2,9 +2,9 @@ package com.project.translator.adapter.in.web;
 
 import com.project.translator.application.port.in.TagDetails;
 import com.project.translator.application.port.in.TagUseCase;
-import com.project.translator.domain.TagDomain;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.project.translator.application.port.out.TagDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,13 +29,13 @@ public class TagController {
 
     @Operation(summary = "Returns all tags")
     @GetMapping
-    Collection<TagDomain> getTags() {
+    Collection<TagDto> getTags() {
         return tagUseCase.getTags();
     }
 
     @Operation(summary = "Returns tag by id")
     @GetMapping(value = "/{id}")
-    TagDomain getById(@PathVariable("id") Long id) {
+    TagDto getById(@PathVariable("id") Long id) {
         return tagUseCase.getTagById(id);
     }
 

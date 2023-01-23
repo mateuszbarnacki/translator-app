@@ -6,9 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
-import com.project.translator.domain.LanguageDomain;
-import com.project.translator.domain.MessageDomain;
-import com.project.translator.domain.TagDomain;
+import com.project.translator.application.port.out.MessageDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,7 +90,7 @@ class MessageControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(2L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].language.language").value("English"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].language").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("Lorem ipsum"));
     }
 
@@ -105,9 +103,8 @@ class MessageControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(12L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.originalMessage.id").value(3L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.originalMessage.content").value("Test"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.language.language").value("Polish"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.originalMessage").value(3L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.language").value(4L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("Test"));
     }
 
@@ -122,7 +119,7 @@ class MessageControllerTest {
     @Test
     void shouldFindMessagesByLanguage() throws Exception {
         // given
-        List<MessageDomain> expectedMessages = buildGetMessagesResult();
+        List<MessageDto> expectedMessages = buildGetMessagesResult();
         when(useCase.findMessagesByLanguage(anyString())).thenReturn(expectedMessages);
         // when
         MvcResult result = mvc.perform(
@@ -131,7 +128,7 @@ class MessageControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
         // then
-        List<MessageDomain> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+        List<MessageDto> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
         assertThat(actual).containsExactlyElementsOf(expectedMessages);
@@ -141,7 +138,7 @@ class MessageControllerTest {
     @Test
     void shouldFindMessagesByTag() throws Exception {
         // given
-        List<MessageDomain> expectedMessages = buildGetMessagesResult();
+        List<MessageDto> expectedMessages = buildGetMessagesResult();
         when(useCase.findMessagesByTag(anyString())).thenReturn(expectedMessages);
         // when
         MvcResult result = mvc.perform(
@@ -150,32 +147,32 @@ class MessageControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
         // then
-        List<MessageDomain> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+        List<MessageDto> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
         assertThat(actual).containsExactlyElementsOf(expectedMessages);
     }
 
-    private List<MessageDomain> buildGetMessagesResult() {
-        return List.of(MessageDomain.builder()
+    private List<MessageDto> buildGetMessagesResult() {
+        return List.of(MessageDto.builder()
                 .id(2L)
-                .originalMessage(MessageDomain.builder().build())
-                .language(LanguageDomain.builder().id(1L).language("English").build())
+                .originalMessage(1L)
+                .language(1L)
                 .content("Lorem ipsum")
                 .tags(buildTagDomain()).build());
     }
 
-    private MessageDomain buildGetMessageResult() {
-        return MessageDomain.builder()
+    private MessageDto buildGetMessageResult() {
+        return MessageDto.builder()
                 .id(12L)
-                .originalMessage(MessageDomain.builder().id(3L).content("Test").build())
-                .language(LanguageDomain.builder().id(4L).language("Polish").build())
+                .originalMessage(3L)
+                .language(4L)
                 .content("Test")
                 .tags(buildTagDomain())
                 .build();
     }
 
-    private Set<TagDomain> buildTagDomain() {
-        return Set.of(TagDomain.builder().tag("testTag").build());
+    private Set<Long> buildTagDomain() {
+        return Set.of(3L);
     }
 }

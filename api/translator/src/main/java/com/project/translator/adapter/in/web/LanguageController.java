@@ -1,8 +1,8 @@
 package com.project.translator.adapter.in.web;
 
+import com.project.translator.application.port.out.LanguageDto;
 import com.project.translator.application.port.in.LanguageDetails;
 import com.project.translator.application.port.in.LanguageUseCase;
-import com.project.translator.domain.LanguageDomain;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,13 +30,13 @@ public class LanguageController {
 
     @Operation(summary = "Returns all languages")
     @GetMapping
-    Collection<LanguageDomain> getLanguages() {
+    Collection<LanguageDto> getLanguages() {
         return languageUseCase.getLanguages();
     }
 
     @Operation(summary = "Returns language by id")
     @GetMapping(value = "/{id}")
-    LanguageDomain getById(@PathVariable("id") Long id) {
+    LanguageDto getById(@PathVariable("id") Long id) {
         return languageUseCase.getLanguageById(id);
     }
 

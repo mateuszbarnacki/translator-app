@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.translator.application.port.in.LanguageDetails;
+import com.project.translator.application.port.out.LanguageDto;
 import com.project.translator.application.port.in.LanguageUseCase;
-import com.project.translator.domain.LanguageDomain;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,7 +74,7 @@ class LanguageControllerTest {
     @Test
     void shouldReturnListOfLanguages() throws Exception {
         when(useCase.getLanguages())
-                .thenReturn(List.of(LanguageDomain.builder().id(2L).language("Polish").build()));
+                .thenReturn(List.of(LanguageDto.builder().id(2L).language("Polish").build()));
 
         mvc.perform(MockMvcRequestBuilders.get("/languages")
                         .content(MediaType.APPLICATION_JSON_VALUE))
@@ -88,7 +88,7 @@ class LanguageControllerTest {
     @Test
     void shouldReturnSingleLanguage() throws Exception {
         when(useCase.getLanguageById(anyLong()))
-                .thenReturn(LanguageDomain.builder().id(1L).language("English").build());
+                .thenReturn(LanguageDto.builder().id(1L).language("English").build());
 
         mvc.perform(MockMvcRequestBuilders.get("/languages/{id}", 1L))
                 .andExpect(MockMvcResultMatchers.status().isOk())

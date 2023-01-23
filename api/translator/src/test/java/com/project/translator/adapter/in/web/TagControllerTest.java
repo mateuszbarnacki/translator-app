@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.translator.application.port.in.TagDetails;
 import com.project.translator.application.port.in.TagUseCase;
-import com.project.translator.domain.TagDomain;
+import com.project.translator.application.port.out.TagDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,7 +72,7 @@ class TagControllerTest {
     @Test
     void shouldReturnListOfTags() throws Exception {
         when(useCase.getTags())
-                .thenReturn(List.of(TagDomain.builder().id(13L).tag("Beast").build()));
+                .thenReturn(List.of(TagDto.builder().id(13L).tag("Beast").build()));
 
         mvc.perform(MockMvcRequestBuilders.get("/tags")
                         .content(MediaType.APPLICATION_JSON_VALUE))
@@ -86,7 +86,7 @@ class TagControllerTest {
     @Test
     void shouldReturnSingleTag() throws Exception {
         when(useCase.getTagById(anyLong()))
-                .thenReturn(TagDomain.builder().id(4L).tag("Best").build());
+                .thenReturn(TagDto.builder().id(4L).tag("Best").build());
 
         mvc.perform(MockMvcRequestBuilders.get("/tags/{id}", 4L))
                 .andExpect(MockMvcResultMatchers.status().isOk())

@@ -2,6 +2,7 @@ package com.project.translator.application.service;
 
 import com.project.common.UseCase;
 import com.project.translator.application.port.in.LanguageDetails;
+import com.project.translator.application.port.out.LanguageDto;
 import com.project.translator.application.port.in.LanguageUseCase;
 import com.project.translator.application.port.out.LanguagePort;
 import com.project.translator.domain.LanguageDomain;
@@ -14,17 +15,19 @@ import java.util.Collection;
 @UseCase
 @Transactional
 public class LanguageService implements LanguageUseCase {
-
     private final LanguagePort languagePort;
+    private final LanguageMapper languageMapper;
 
     @Override
-    public Collection<LanguageDomain> getLanguages() {
-        return languagePort.getLanguages();
+    public Collection<LanguageDto> getLanguages() {
+        Collection<LanguageDomain> domains = languagePort.getLanguages();
+        return languageMapper.mapDomainsToDtos(domains);
     }
 
     @Override
-    public LanguageDomain getLanguageById(Long id) {
-        return languagePort.getLanguageById(id);
+    public LanguageDto getLanguageById(Long id) {
+        LanguageDomain domain = languagePort.getLanguageById(id);
+        return languageMapper.mapDomainToDto(domain);
     }
 
     @Override

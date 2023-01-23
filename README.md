@@ -34,7 +34,8 @@ Trello was used as a tool to organize and plan work. Our Trello board is availab
 
 #### Backend
 
-* App is easily expandable for new languages of translations (adding new language is available through app), same for deleting and modyfing existing languages
+Implemented functionalities: 
+* App is easily expandable for new languages of translations (adding new language is available through app), same for deleting and modifying existing languages
 * User is able to get created messages and translations from database
 * User is able to create new messages and translations
 * User is able to modify existing messages and translations
@@ -44,6 +45,10 @@ Trello was used as a tool to organize and plan work. Our Trello board is availab
 * User is able to delete existing tags
 * User is able to list all messages, tags and languages
 * User is able to search for messages using tags, languages, original message or content
+
+
+After backend app is running locally swagger is available under [link](http://localhost:8080/swagger-ui/index.html#/).
+
 
 #### Frontend
 

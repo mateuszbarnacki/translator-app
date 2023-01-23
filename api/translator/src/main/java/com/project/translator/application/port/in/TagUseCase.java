@@ -1,14 +1,14 @@
 package com.project.translator.application.port.in;
 
-import com.project.translator.domain.TagDomain;
+import com.project.translator.application.port.out.TagDto;
 
 import java.util.Collection;
 
 public interface TagUseCase {
 
-    Collection<TagDomain> getTags();
+    Collection<TagDto> getTags();
 
-    TagDomain getTagById(Long id);
+    TagDto getTagById(Long id);
 
     void createTag(TagDetails tagDetails);
 

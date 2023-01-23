@@ -1,4 +1,4 @@
-package com.project.translator.application.dto;
+package com.project.translator.application.port.out;
 
 import lombok.Builder;
 import lombok.Value;

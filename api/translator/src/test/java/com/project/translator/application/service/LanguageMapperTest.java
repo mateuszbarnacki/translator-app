@@ -1,5 +1,6 @@
-package com.project.translator.application.port.out;
+package com.project.translator.application.service;
 
+import com.project.translator.application.port.out.LanguageDto;
 import com.project.translator.domain.LanguageDomain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

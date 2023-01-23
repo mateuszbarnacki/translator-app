@@ -1,5 +1,6 @@
-package com.project.translator.application.port.out;
+package com.project.translator.application.service;
 
+import com.project.translator.application.port.out.MessageDto;
 import com.project.translator.domain.LanguageDomain;
 import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.TagDomain;

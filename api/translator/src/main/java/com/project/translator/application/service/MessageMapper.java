@@ -1,19 +1,25 @@
-package com.project.translator.application.port.out;
+package com.project.translator.application.service;
 
+import com.project.translator.application.port.out.MessageDto;
 import com.project.translator.domain.LanguageDomain;
 import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.TagDomain;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
-public class MessageMapper {
-    public MessageDto mapDomainToDto(MessageDomain domain) {
+class MessageMapper {
+    Collection<MessageDto> mapDomainsToDtos(Collection<MessageDomain> domainCollection) {
+        return domainCollection.stream()
+                .map(this::mapDomainToDto)
+                .toList();
+    }
+
+    MessageDto mapDomainToDto(MessageDomain domain) {
         MessageDomain originalMessage = domain.getOriginalMessage();
         LanguageDomain language = domain.getLanguage();
         return MessageDto.builder()

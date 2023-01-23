@@ -4,14 +4,12 @@ import com.project.common.UseCase;
 import com.project.translator.application.port.in.TagDetails;
 import com.project.translator.application.port.in.TagUseCase;
 import com.project.translator.application.port.out.TagDto;
-import com.project.translator.application.port.out.TagMapper;
 import com.project.translator.application.port.out.TagPort;
-import com.project.translator.domain.exception.TagNotFoundException;
+import com.project.translator.domain.TagDomain;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @UseCase
@@ -22,17 +20,14 @@ public class TagService implements TagUseCase {
 
     @Override
     public Collection<TagDto> getTags() {
-        return tagPort.getTags().stream()
-                .map(tagMapper::mapDomainToDto)
-                .toList();
+        Collection<TagDomain> tags = tagPort.getTags();
+        return tagMapper.mapDomainsToDtos(tags);
     }
 
     @Override
     public TagDto getTagById(Long id) {
-        return Optional.ofNullable(id)
-                .map(tagPort::getTagById)
-                .map(tagMapper::mapDomainToDto)
-                .orElseThrow(() -> new TagNotFoundException(id));
+        TagDomain tag = tagPort.getTagById(id);
+        return tagMapper.mapDomainToDto(tag);
     }
 
     @Override

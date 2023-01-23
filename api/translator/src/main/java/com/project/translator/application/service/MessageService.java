@@ -4,15 +4,13 @@ import com.project.common.UseCase;
 import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
 import com.project.translator.application.port.out.MessageDto;
-import com.project.translator.application.port.out.MessageMapper;
 import com.project.translator.application.port.out.MessagePort;
-import com.project.translator.domain.exception.MessageNotFoundException;
+import com.project.translator.domain.MessageDomain;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @UseCase
@@ -23,45 +21,38 @@ public class MessageService implements MessageUseCase {
 
     @Override
     public Collection<MessageDto> getMessages() {
-        return messagePort.getMessages().stream()
-                .map(messageMapper::mapDomainToDto)
-                .toList();
+        Collection<MessageDomain> messages = messagePort.getMessages();
+        return messageMapper.mapDomainsToDtos(messages);
     }
 
     @Override
     public List<MessageDto> findMessagesByLanguage(String language) {
-        return messagePort.findMessageByLanguage(language).stream()
-                .map(messageMapper::mapDomainToDto)
-                .toList();
+        Collection<MessageDomain> messages = messagePort.findMessageByLanguage(language);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
     public List<MessageDto> findMessagesByTag(String tag) {
-        return messagePort.findMessageByTag(tag).stream()
-                .map(messageMapper::mapDomainToDto)
-                .toList();
+        Collection<MessageDomain> messages = messagePort.findMessageByTag(tag);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
     public List<MessageDto> findMessagesByOriginalMessage(Long originalMessageId){
-     return messagePort.findMessageByOriginalMessage(originalMessageId).stream()
-             .map(messageMapper::mapDomainToDto)
-             .toList();
+        Collection<MessageDomain> messages = messagePort.findMessageByOriginalMessage(originalMessageId);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
     public List<MessageDto> findMessagesByContent(String content) {
-        return messagePort.findMessagesByContent(content).stream()
-                .map(messageMapper::mapDomainToDto)
-                .toList();
+        Collection<MessageDomain> messages = messagePort.findMessagesByContent(content);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
     public MessageDto getMessageById(Long id) {
-        return Optional.ofNullable(id)
-                .map(messagePort::getMessageById)
-                .map(messageMapper::mapDomainToDto)
-                .orElseThrow(() -> new MessageNotFoundException(id));
+        MessageDomain message = messagePort.getMessageById(id);
+        return messageMapper.mapDomainToDto(message);
     }
 
     @Override

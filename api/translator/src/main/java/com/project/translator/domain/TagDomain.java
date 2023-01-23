@@ -8,8 +8,6 @@ import lombok.Value;
 @Builder
 public class TagDomain {
 
-    @Schema(description = "Tag id")
     Long id;
-    @Schema(description = "Tag name")
     String tag;
 }

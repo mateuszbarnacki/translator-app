@@ -8,8 +8,6 @@ import lombok.Value;
 @Builder
 public class LanguageDomain {
 
-    @Schema(description = "Language id")
     Long id;
-    @Schema(description = "Language name")
     String language;
 }

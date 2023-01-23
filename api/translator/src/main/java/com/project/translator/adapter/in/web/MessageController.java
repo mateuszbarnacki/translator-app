@@ -4,6 +4,7 @@ import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
 import com.project.translator.domain.MessageDomain;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,6 +37,30 @@ public class MessageController {
     MessageDomain getById(@PathVariable("id") Long id) {
         return messageUseCase.getMessageById(id);
     }
+
+
+    @GetMapping(value = "/language")
+    List<MessageDomain> findMessagesByLanguage(@RequestParam("value") @NotNull(message = "missing language param") String language) {
+        return messageUseCase.findMessagesByLanguage(language);
+    }
+
+    @GetMapping(value = "/tag")
+    List<MessageDomain> findMessagesByTag(@RequestParam("value") @NotNull(message = "missing tag param") String tag) {
+        return messageUseCase.findMessagesByTag(tag);
+    }
+
+    @GetMapping(value = "/original-message")
+    List<MessageDomain> findMessagesByOriginalMessage(@RequestParam("value")
+        @NotNull(message = "missing original message id param") Long originalMessageId) {
+        return messageUseCase.findMessagesByOriginalMessage(originalMessageId);
+    }
+
+    @GetMapping(value = "/content")
+    List<MessageDomain> findMessagesByContent(@RequestParam("value")
+    @NotNull(message = "missing content param") String content) {
+        return messageUseCase.findMessagesByContent(content);
+    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

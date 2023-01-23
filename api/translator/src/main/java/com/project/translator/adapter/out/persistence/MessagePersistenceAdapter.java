@@ -11,14 +11,12 @@ import com.project.translator.domain.exception.OriginalMessageNotInEnglishExcept
 import com.project.translator.domain.exception.TagNotFoundException;
 import com.project.translator.domain.exception.TranslationCannotBeConvertedException;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,9 +34,43 @@ class MessagePersistenceAdapter implements MessagePort {
         log.info("Loading all messages...");
 
         final var messageEntities = messageRepository.findAll();
-        return messageEntities.stream()
-                .map(translatorMapper::toMessageDomain)
-                .collect(Collectors.toList());
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessageByLanguage(String language) {
+        log.info("Loading messages by language = {}", language);
+
+        List<MessageEntity> messageEntities = messageRepository.findByLanguage_languageContainingIgnoreCase(language);
+
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessageByTag(String tag) {
+        log.info("Loading messages by tag = {}", tag);
+
+        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContaining(tag);
+
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessageByOriginalMessage(Long originalMessageId) {
+        log.info("Loading messages by original message id = {}", originalMessageId);
+
+        final var originalMessage = getMessageEntity(originalMessageId);
+        final var messageEntities = messageRepository.findByOriginalMessage(originalMessage);
+
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessagesByContent(String content) {
+        log.info("Loading messages by content = {}", content);
+
+        final var messageEntities = messageRepository.findByContentContainingIgnoreCase(content);
+        return translatorMapper.toMessageDomainList(messageEntities);
     }
 
     @Override
@@ -91,9 +123,9 @@ class MessagePersistenceAdapter implements MessagePort {
         if (originalMessageId != null) {
             throw new OriginalMessageIsNotNullException();
         }
-        if (!isLanguageEnglish(languageEntity)) {
-            throw new OriginalMessageNotInEnglishException(languageEntity.getLanguage());
-        }
+
+        checkIfMessageInEnglish(languageEntity);
+
         final var tags = getTagEntities(messageDetails.tags());
         messageEntity.setContent(messageDetails.content());
         tags.forEach(messageEntity::addTag);
@@ -151,8 +183,11 @@ class MessagePersistenceAdapter implements MessagePort {
         final var languageId = messageDetails.language();
         final var originalMessageId = messageDetails.original_message();
         final var originalMessage = getMessageEntity(originalMessageId);
-        final var tags = new HashSet<>(originalMessage.getTags());
+        final var originalMessLang = originalMessage.getLanguage();
 
+        checkIfMessageInEnglish(originalMessLang);
+
+        final var tags = new HashSet<>(originalMessage.getTags());
         final var messageEntity = new MessageEntity();
         messageEntity.setOriginalMessage(originalMessage);
         messageEntity.setContent(messageDetails.content());
@@ -188,5 +223,10 @@ class MessagePersistenceAdapter implements MessagePort {
 
     private boolean isLanguageEnglish(LanguageEntity languageEntity) {
         return languageEntity.getLanguage().equalsIgnoreCase(ENGLISH_LANGUAGE);
+    }
+    private void checkIfMessageInEnglish(LanguageEntity languageEntity) {
+        if(!isLanguageEnglish(languageEntity)) {
+            throw new OriginalMessageNotInEnglishException(languageEntity.getLanguage());
+        }
     }
 }

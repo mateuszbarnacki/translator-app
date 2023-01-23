@@ -1,12 +1,12 @@
 package com.project.translator.adapter.out.persistence;
 
 import com.project.translator.application.port.in.TagDetails;
+import com.project.translator.application.port.out.TagPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,19 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@Import({TagPersistenceAdapter.class})
+@Import({TagPersistenceAdapter.class,
+    TranslatorMapperImpl.class})
 public class TagPersistenceAdapterTest {
 
     private static final String NOTE_TAG = "Note";
     private static final String MESSAGE_TAG = "Message";
 
     @Autowired
-    private TagPersistenceAdapter adapter;
+    private TagPort adapter;
 
     @Autowired
     private TagRepository tagRepository;
 
-    @MockBean
+    @Autowired
     private TranslatorMapper translatorMapper;
 
     @BeforeEach

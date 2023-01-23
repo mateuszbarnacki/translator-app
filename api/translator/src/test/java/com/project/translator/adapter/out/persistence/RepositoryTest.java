@@ -48,9 +48,20 @@ class RepositoryTest {
         saveEntities(tag, language, message);
 
         // when
-        List<MessageEntity> messageEntities = messageRepository.findByLanguage("testLanguage");
+        List<MessageEntity> messageEntities = messageRepository.findByLanguage_languageContainingIgnoreCase(
+                "testLanguage");
         // then
         assertThat(messageEntities).hasSize(2);
+    }
+
+
+    @Test
+    void findMessagesByTag() {
+        // given
+        // when
+        List<MessageEntity> messageEntities = messageRepository.findByTags_tagContaining("test");
+        // then
+        assertThat(messageEntities).hasSize(1);
     }
 
     @Test

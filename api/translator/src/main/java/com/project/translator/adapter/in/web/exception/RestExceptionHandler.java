@@ -30,6 +30,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(buildRestError(e), HttpStatus.NOT_FOUND);
     }
 
+
     @ExceptionHandler({TagNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<RestError> handleTagNotFoundException(TagNotFoundException e) {

@@ -7,9 +7,6 @@ import com.project.translator.application.port.out.LanguagePort;
 import com.project.translator.application.port.out.MessagePort;
 import com.project.translator.application.port.out.TagPort;
 import com.project.translator.domain.MessageDomain;
-import com.project.translator.domain.exception.ErrorCode;
-import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
-import com.project.translator.domain.exception.MessagesSearchByTagNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TranslationCannotBeConvertedException;
@@ -33,7 +30,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -195,13 +194,9 @@ class MessagePersistenceAdapterTest {
         // given
         final String language = "notSupportedLanguage";
         // when
-        MessagesSearchByLanguageNotFoundException exception = assertThrows(
-                MessagesSearchByLanguageNotFoundException.class,
-                () -> messageAdapter.findMessageByLanguage(language));
+        List<MessageDomain> actualMessages = messageAdapter.findMessageByLanguage(language);
         // then
-        assertThat(exception.getMessage()).isEqualTo(
-                String.format("Message for language=<%s> not found!", language));
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+        assertTrue(actualMessages.isEmpty());
     }
 
     @ParameterizedTest
@@ -220,13 +215,9 @@ class MessagePersistenceAdapterTest {
     void findMessageByTag_should_throw_exception(String tag) {
         // given
         // when
-        MessagesSearchByTagNotFoundException exception = assertThrows(
-                MessagesSearchByTagNotFoundException.class,
-                () -> messageAdapter.findMessageByTag(tag));
+        List<MessageDomain> actualMessages = messageAdapter.findMessageByTag(tag);
         // then
-        assertThat(exception.getMessage()).isEqualTo(
-                String.format("Message for tag=<%s> not found!", tag));
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+        assertTrue(actualMessages.isEmpty());
     }
 
     @ParameterizedTest
@@ -238,6 +229,36 @@ class MessagePersistenceAdapterTest {
         // then
         assertThat(actualMessages).extracting("content", "language.language")
                 .contains(expected.toArray(new Tuple[0]));
+    }
+
+    @Test
+    void findMessageByOriginalMessage_should_return_messages() {
+        final var actualMessages = messageAdapter.findMessageByOriginalMessage(ORIGINAL_MESSAGE_ID);
+
+        assertFalse(actualMessages.isEmpty());
+    }
+
+    @Test
+    void findMessageByOriginalMessage_should_return_emptyList() {
+       final var actualMessages = messageAdapter.findMessageByOriginalMessage(TRANSLATION_ID);
+
+        assertTrue(actualMessages.isEmpty());
+    }
+
+    @Test
+    void findMessageByContent_should_return_messages() {
+        final var actualMessages = messageAdapter.findMessagesByContent(ENGLISH_CONTENT);
+
+        assertFalse(actualMessages.isEmpty());
+    }
+
+    @Test
+    void findMessageByContent_should_return_emptyList() {
+        final var content = "Not existed content";
+
+        final var actualMessages = messageAdapter.findMessagesByContent(content);
+
+        assertTrue(actualMessages.isEmpty());
     }
 
     private Stream<Arguments> findMessageByLanguageArguments() {

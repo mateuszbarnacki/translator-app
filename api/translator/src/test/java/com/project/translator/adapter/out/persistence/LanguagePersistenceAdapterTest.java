@@ -1,12 +1,12 @@
 package com.project.translator.adapter.out.persistence;
 
 import com.project.translator.application.port.in.LanguageDetails;
+import com.project.translator.application.port.out.LanguagePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,18 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@Import({LanguagePersistenceAdapter.class})
+@Import({LanguagePersistenceAdapter.class,
+        TranslatorMapperImpl.class})
 class LanguagePersistenceAdapterTest {
     private static final String ENGLISH_LANGUAGE = "English";
     private static final String POLISH_LANGUAGE = "Polish";
 
     @Autowired
-    private LanguagePersistenceAdapter adapter;
+    private LanguagePort adapter;
 
     @Autowired
     private LanguageRepository languageRepository;
 
-    @MockBean
+    @Autowired
     private TranslatorMapper translatorMapper;
 
     @BeforeEach

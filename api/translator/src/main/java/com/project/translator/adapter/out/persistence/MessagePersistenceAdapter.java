@@ -6,20 +6,17 @@ import com.project.translator.application.port.out.MessagePort;
 import com.project.translator.domain.MessageDomain;
 import com.project.translator.domain.exception.LanguageNotFoundException;
 import com.project.translator.domain.exception.MessageNotFoundException;
-import com.project.translator.domain.exception.MessagesSearchByLanguageNotFoundException;
-import com.project.translator.domain.exception.MessagesSearchByTagNotFoundException;
 import com.project.translator.domain.exception.OriginalMessageIsNotNullException;
 import com.project.translator.domain.exception.OriginalMessageNotInEnglishException;
 import com.project.translator.domain.exception.TagNotFoundException;
 import com.project.translator.domain.exception.TranslationCannotBeConvertedException;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,25 +39,37 @@ class MessagePersistenceAdapter implements MessagePort {
 
     @Override
     public List<MessageDomain> findMessageByLanguage(String language) {
-        log.info("Loading message by language = {}", language);
+        log.info("Loading messages by language = {}", language);
 
         List<MessageEntity> messageEntities = messageRepository.findByLanguage_languageContainingIgnoreCase(language);
-        if (messageEntities.isEmpty()) {
-            throw new MessagesSearchByLanguageNotFoundException(language);
-        }
 
         return translatorMapper.toMessageDomainList(messageEntities);
     }
 
     @Override
     public List<MessageDomain> findMessageByTag(String tag) {
-        log.info("Loading message by tag = {}", tag);
+        log.info("Loading messages by tag = {}", tag);
 
         List<MessageEntity> messageEntities = messageRepository.findByTags_tagContaining(tag);
-        if (messageEntities.isEmpty()) {
-            throw new MessagesSearchByTagNotFoundException(tag);
-        }
 
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessageByOriginalMessage(Long originalMessageId) {
+        log.info("Loading messages by original message id = {}", originalMessageId);
+
+        final var originalMessage = getMessageEntity(originalMessageId);
+        final var messageEntities = messageRepository.findByOriginalMessage(originalMessage);
+
+        return translatorMapper.toMessageDomainList(messageEntities);
+    }
+
+    @Override
+    public List<MessageDomain> findMessagesByContent(String content) {
+        log.info("Loading messages by content = {}", content);
+
+        final var messageEntities = messageRepository.findByContentContainingIgnoreCase(content);
         return translatorMapper.toMessageDomainList(messageEntities);
     }
 

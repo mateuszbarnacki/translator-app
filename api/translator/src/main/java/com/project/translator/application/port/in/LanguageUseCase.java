@@ -1,14 +1,14 @@
 package com.project.translator.application.port.in;
 
-import com.project.translator.domain.LanguageDomain;
+import com.project.translator.application.port.out.LanguageDto;
 
 import java.util.Collection;
 
 public interface LanguageUseCase {
 
-    Collection<LanguageDomain> getLanguages();
+    Collection<LanguageDto> getLanguages();
 
-    LanguageDomain getLanguageById(Long id);
+    LanguageDto getLanguageById(Long id);
 
     void createLanguage(LanguageDetails languageDetails);
 

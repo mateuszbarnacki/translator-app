@@ -1,8 +1,8 @@
 package com.project.translator.adapter.in.web;
 
+import com.project.translator.application.port.out.LanguageDto;
 import com.project.translator.application.port.in.LanguageDetails;
 import com.project.translator.application.port.in.LanguageUseCase;
-import com.project.translator.domain.LanguageDomain;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,12 +26,12 @@ public class LanguageController {
     private final LanguageUseCase languageUseCase;
 
     @GetMapping
-    Collection<LanguageDomain> getLanguages() {
+    Collection<LanguageDto> getLanguages() {
         return languageUseCase.getLanguages();
     }
 
     @GetMapping(value = "/{id}")
-    LanguageDomain getById(@PathVariable("id") Long id) {
+    LanguageDto getById(@PathVariable("id") Long id) {
         return languageUseCase.getLanguageById(id);
     }
 

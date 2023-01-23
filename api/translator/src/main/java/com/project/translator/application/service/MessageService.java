@@ -3,6 +3,7 @@ package com.project.translator.application.service;
 import com.project.common.UseCase;
 import com.project.translator.application.port.in.MessageDetails;
 import com.project.translator.application.port.in.MessageUseCase;
+import com.project.translator.application.port.out.MessageDto;
 import com.project.translator.application.port.out.MessagePort;
 import com.project.translator.domain.MessageDomain;
 import jakarta.transaction.Transactional;
@@ -15,37 +16,43 @@ import java.util.List;
 @UseCase
 @Transactional
 public class MessageService implements MessageUseCase {
-
     private final MessagePort messagePort;
+    private final MessageMapper messageMapper;
 
     @Override
-    public Collection<MessageDomain> getMessages() {
-        return messagePort.getMessages();
+    public Collection<MessageDto> getMessages() {
+        Collection<MessageDomain> messages = messagePort.getMessages();
+        return messageMapper.mapDomainsToDtos(messages);
     }
 
     @Override
-    public List<MessageDomain> findMessagesByLanguage(String language) {
-        return messagePort.findMessageByLanguage(language);
+    public List<MessageDto> findMessagesByLanguage(String language) {
+        Collection<MessageDomain> messages = messagePort.findMessageByLanguage(language);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
-    public List<MessageDomain> findMessagesByTag(String tag) {
-        return messagePort.findMessageByTag(tag);
+    public List<MessageDto> findMessagesByTag(String tag) {
+        Collection<MessageDomain> messages = messagePort.findMessageByTag(tag);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
-    public List<MessageDomain> findMessagesByOriginalMessage(Long originalMessageId){
-     return messagePort.findMessageByOriginalMessage(originalMessageId);
+    public List<MessageDto> findMessagesByOriginalMessage(Long originalMessageId){
+        Collection<MessageDomain> messages = messagePort.findMessageByOriginalMessage(originalMessageId);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
-    public List<MessageDomain> findMessagesByContent(String content) {
-        return messagePort.findMessagesByContent(content);
+    public List<MessageDto> findMessagesByContent(String content) {
+        Collection<MessageDomain> messages = messagePort.findMessagesByContent(content);
+        return messageMapper.mapDomainsToDtos(messages).stream().toList();
     }
 
     @Override
-    public MessageDomain getMessageById(Long id) {
-        return messagePort.getMessageById(id);
+    public MessageDto getMessageById(Long id) {
+        MessageDomain message = messagePort.getMessageById(id);
+        return messageMapper.mapDomainToDto(message);
     }
 
     @Override

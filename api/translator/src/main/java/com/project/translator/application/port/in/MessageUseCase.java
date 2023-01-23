@@ -1,22 +1,22 @@
 package com.project.translator.application.port.in;
 
-import com.project.translator.domain.MessageDomain;
+import com.project.translator.application.port.out.MessageDto;
 
 import java.util.Collection;
 import java.util.List;
 
 public interface MessageUseCase {
-    Collection<MessageDomain> getMessages();
+    Collection<MessageDto> getMessages();
 
-    List<MessageDomain> findMessagesByLanguage(String language);
+    List<MessageDto> findMessagesByLanguage(String language);
 
-    List<MessageDomain> findMessagesByTag(String tag);
+    List<MessageDto> findMessagesByTag(String tag);
 
-    List<MessageDomain> findMessagesByOriginalMessage(Long originalMessageId);
+    List<MessageDto> findMessagesByOriginalMessage(Long originalMessageId);
 
-    List<MessageDomain> findMessagesByContent(String content);
+    List<MessageDto> findMessagesByContent(String content);
 
-    MessageDomain getMessageById(Long id);
+    MessageDto getMessageById(Long id);
 
     void createMessage(MessageDetails messageDetails);
 
